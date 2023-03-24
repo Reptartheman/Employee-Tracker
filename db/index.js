@@ -97,7 +97,53 @@ class Database {
       roleId,
       employeeId,
     ]); 
+  }
+// Two parameters again...
+  // 1. The employee we are trying to access.
+  //2. New manager we are trying to update.
+  updateEmployeeManager(employeeId, managerId) {
+    return this.connection
+    .promise()
+    .query("UPDATE employee SET manager_id = ? WHERE id = ?", [
+      employeeId,
+      managerId,
+    ]);
+  }
+
+// This one will let us add an employee to the employee table.
+  addEmployee(employee) {
+    return this.connection
+    .promise()
+    .query("INSERT INTO employee SET ?", employee);
+  }
+
+// This function is grabbing our connection. The promise is fulfilling that statement and once it does that it will query the new data into the database.
+  addRole(role) {
+    return this.connection.promise().query("INSERT INTO role SET ?", role);
+  }
+// Same as above except that we are adding a new department.
+  addDepartment(department) {
+    return this.connection.promise().query("INSERT INTO department SET ?", department);
 
   }
-}
+// This is deleting an employee with a WHERE clause that says "Hey, only do this if the id matches."
+  deleteEmployee(employeeId) {
+    return this.connection.promise().query("DELETE FROM employee WHERE id = ?", employeeId);
 
+  }
+// This is deleting a role with a WHERE clause that says "Hey, only do this if the role Id matches."
+  deleteRole(roleId) {
+    return this.connection
+    .promise()
+    .query("DELETE FROM role WHERE id = ?", roleId);
+
+  }
+// This is deleting a department from the department table.
+  deleteDepartment(departmentId) {
+    return this.connection
+    .promise()
+    .query("DELETE FROM department WHERE id = ?", departmentId);
+  }
+} 
+
+module.exports = new Database(connection);
