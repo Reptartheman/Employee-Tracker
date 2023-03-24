@@ -103,7 +103,7 @@ function startPrompts() {
         viewDepartments();
         break;
       case "VIEW_UTILIZED_BUDGET_BY_DEPARTMENT":
-        viewUtilizedBudgetByDepartment();
+        viewDepartmentBudget();
         break;
       case "UPDATE_EMPLOYEE_ROLE":
         updateEmployeeRole();
@@ -229,4 +229,23 @@ function viewRoles() {
     .then(() => startPrompts());
 }
 
+function viewDepartments() {
+    dataBase.searchAllDepartments()
+    .then(([rows]) => {
+        let departments = rows;
+        console.log('\n');
+        console.table(departments);
+    })
+    .then(() => startPrompts());
+}
+
+function viewDepartmentBudget() {
+    dataBase.departmentBudgetData()
+    .then(([rows]) => {
+        let departments = rows;
+        console.log('\n');
+        console.table(departments);
+    })
+    .then(() => startPrompts());
+}
 
