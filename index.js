@@ -151,7 +151,16 @@ function viewEmployees() {
     })
     .then(() => startPrompts);
 }
-
+// The function below shows which employees work under certain managers.
+// Same concept as the first function, however...
+// 1. We are using a constant with .map() to return a new array.
+// 2. Within the .map() method and we are going to pass an object as our parameter.
+// 3. As we return the parameters using template literals, we are going to access the data we stored in the managers variable.
+// 4. We then come up with a set of prompts using inquirer that asks the user which employee they want to see reports for.
+//4a. The choices are stored in const = managerChoices.
+// 5. The first .then() is querying our database that lets us find employees by manager.
+// 6. The data then gets displayed.
+// 7. The 'if statement' checks to see if the data passes. If it doesn't the console logs that message.
 function viewEmployeesByManager() {
   dataBase.searchEmployees().then(([rows]) => {
     let managers = rows;
@@ -183,3 +192,41 @@ function viewEmployeesByManager() {
       .then(() => startPrompts());
   });
 }
+// Similar process as above, except that we are showing what employees work in what department.
+function viewEmployeesByDepartment() {
+  dataBase.searchAllDepartments().then(([rows]) => {
+    let departments = rows;
+    const departmentChoices = departments.map(({ id, name }) => ({
+      name: name,
+      value: id,
+    }));
+    prompt([
+      {
+        type: "list",
+        name: "departmentId",
+        message: "Which department would you like to see employees for?",
+        choices: departmentChoices,
+      },
+    ])
+      .then((res) => dataBase.searchEmployeesByDepartment(res.departmentId))
+      .then(([rows]) => {
+        let employees = rows;
+        console.log("\n");
+        console.table(employees);
+      })
+      .then(() => startPrompts());
+  });
+}
+
+function viewRoles() {
+  dataBase
+    .searchAllRoles()
+    .then(([rows]) => {
+      let roles = rows;
+      console.log("\n");
+      console.table(roles);
+    })
+    .then(() => startPrompts());
+}
+
+
