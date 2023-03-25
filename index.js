@@ -112,13 +112,13 @@ function startPrompts() {
         changeManager();
         break;
       case "ADD_EMPLOYEE":
-        addEmployee();
+        createEmployee();
         break;
       case "ADD_ROLE":
-        addRole();
+        createRole();
         break;
       case "ADD_DEPARTMENT":
-        addDepartment();
+        createDepartment();
         break;
       case "REMOVE_EMPLOYEE":
         removeEmployee();
@@ -370,7 +370,7 @@ have different roles.
 
 */
 
-function addEmployee() {
+function createEmployee() {
   prompt([
     {
       type: "input",
@@ -429,5 +429,89 @@ function addEmployee() {
         });
       });
     });
+  });
+}
+/*  This function adds the roles to the database 
+  - The first thing we do is query the database by searching all departments.
+  - Then we took the result of that query, stored it in an array and then gave it a variable.
+  - Then we provided the necessary prompts for the user to answer.
+  - Within the last prompt we are using the information we in store in the 'departmentChoices' variable as a value within the last object in our prompt.
+  - Those results get used in the addRole() query.
+*/
+function createRole() {
+  dataBase.searchAllDepartments().then(([rows]) => {
+    let departments = rows;
+    const departmentChoices = departments.map(({ id, name }) => ({
+      name: name,
+      value: id,
+    }));
+    prompt([
+      {
+        type: "input",
+        name: "title",
+        message: "Please provide a name for the role",
+      },
+      {
+        type: "input",
+        name: "salary",
+        message: "Please provide a salary for the role",
+      },
+      {
+        type: "list",
+        name: "department_id",
+        message: "Please provide a department that this role belongs to",
+        choices: departmentChoices,
+      },
+    ]).then((role) => {
+      dataBase
+        .addRole(role)
+        .then(() => console.log(`Added ${role.title} to the database`))
+        .then(() => startPrompts());
+    });
+  });
+}
+
+function createDepartment() {
+  prompt([
+    {
+      type: "input",
+      name: "name",
+      message: "Please provide a name for the department",
+    },
+  ]).then((res) => {
+    let name = res;
+    dataBase
+      .addDepartment(name)
+      .then(() => console.log(`Added ${name.name} to the database`))
+      .then(() => startPrompts());
+  });
+}
+
+/* Function to remove an employee
+
+  - We need to query the database to search for our employees.
+  - That result will get stores in variable and then we will .map() to return a new array which is where the answers will be stored.
+  - All of that data will get stored into a variable which will then represent our choices when we want to answer the inquirer prompt
+
+*/
+
+function removeEmployee() {
+  dataBase.searchEmployees().then(([rows]) => {
+    let employees = rows;
+    const employeeChoices = employees.map(({ id, first_name, last_name }) => ({
+      name: `${first_name} ${last_name}`,
+      value: id,
+    }));
+    prompt([
+      {
+        type: "list",
+        name: "employeeId",
+        message: "Select an employee to remove from the database",
+        choices: employeeChoices,
+      },
+    ])
+      .then((res) => dataBase.deleteEmployee(res.employeeId))
+      .then(() => console.log("Removed employee from the database"))
+      .then(() => startPrompts());
   });
 }
