@@ -5,7 +5,7 @@ const logo = require("asciiart-logo");
 // The database variable has our connection file that includes the mysql package and connection.
 // It also stores our functions for the SQL queries.
 const dataBase = require("./db");
-const cTabel = require("console.table");
+require("console.table");
 
 startApp();
 
@@ -533,7 +533,7 @@ function removeRole() {
         choices: roleChoices
       },
     ])
-    ((res)=> dataBase.deleteRole(res.roleId))
+    .then(res=> dataBase.deleteRole(res.roleId))
     .then(() => console.log("Removed role from the database"))
     .then(() => startPrompts());
   })
@@ -555,7 +555,7 @@ function removeDepartment() {
         choices: departmentChoices
       },
     ])
-    ((res)=> dataBase.deleteDepartment(res.departmentId))
+    .then(res=> dataBase.deleteDepartment(res.departmentId))
     .then(() => console.log("Removed department from the database"))
     .then(() => startPrompts());
   });
