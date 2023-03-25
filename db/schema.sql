@@ -1,7 +1,7 @@
 -- LINE 3: makes sure that we create the only copy of the database we want to access.
 -- LINE 4: creates the database.
 DROP DATABASE IF EXISTS employees;
-CREATE DATABASE employees; 
+CREATE DATABASE employees;
 
 -- USE will let us know what database we want to use in order to create tables.
 -- The database will have three tables.
@@ -9,7 +9,7 @@ USE employees;
 
 CREATE TABLE department (
     id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(30) UNIQUE NOT NULL,
+    name VARCHAR(30) UNIQUE NOT NULL
 );
 
 -- UNSIGNED: stores only positive values
@@ -56,7 +56,7 @@ CREATE TABLE role (
         -- The ROLE table contains each department which can have multiple roles.
         -- The EMPLOYEE table contains each role which can have multiple employees.
 
-CREATE TABLE employees (
+CREATE TABLE employee (
     id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     first_name VARCHAR(30) NOT NULL,
     last_name VARCHAR(30) NOT NULL,
