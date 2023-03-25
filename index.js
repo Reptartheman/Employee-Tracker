@@ -149,7 +149,7 @@ function viewEmployees() {
       console.log("\n");
       console.table(employees);
     })
-    .then(() => startPrompts);
+    .then(() => startPrompts());
 }
 // The function below shows which employees work under certain managers.
 // Same concept as the first function, however...
