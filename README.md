@@ -7,7 +7,7 @@
 - [Description](#description)
   - [Installation](#installation)
   - [Usage](#usage)
-  - [Video Walkthrough](#videowalkthrough)
+  - [Video Walkthrough](#video walkthrough)
   - [License](#license)
   - [Questions](#questions)
 
