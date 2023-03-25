@@ -18,7 +18,7 @@ CREATE TABLE department (
 
 
 -- All of the tables we make will have a primary key which will let us uniquely identify each record.
-    --This will also allow us to retrieve all of the data and join tables easier.
+    -- This will also allow us to retrieve all of the data and join tables easier.
 
 -- The index cannot be seen by the user but they help retrieve data quicker.
     -- This happens by setting up the column data of our search conditions to be sorted in order.
