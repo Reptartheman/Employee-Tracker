@@ -130,7 +130,7 @@ function startPrompts() {
         removeDepartment();
         break;
       default:
-        quit();
+        closeApp();
     }
   });
 }
@@ -514,4 +514,55 @@ function removeEmployee() {
       .then(() => console.log("Removed employee from the database"))
       .then(() => startPrompts());
   });
+}
+
+/* This next function will remove a role from the database */
+
+function removeRole() {
+  dataBase.searchAllRoles().then(([rows]) => {
+    let roles = rows;
+    const roleChoices = roles.map(({id, title }) => ({
+      name: title,
+      value: id
+    }));
+    prompt([
+      {
+        type: 'list',
+        name: 'roleId',
+        message: 'Please select a role to remove from the database',
+        choices: roleChoices
+      },
+    ])
+    ((res)=> dataBase.deleteRole(res.roleId))
+    .then(() => console.log("Removed role from the database"))
+    .then(() => startPrompts());
+  })
+}
+
+
+function removeDepartment() {
+  dataBase.searchAllDepartments().then(([rows]) => {
+    let departments = rows;
+    const departmentChoices = departments.map(({ id , name }) => ({
+      name: name,
+      value: id
+    }));
+    prompt([
+      {
+        type: 'list',
+        name: 'departmentId',
+        message: 'Please select a department to remove from the database',
+        choices: departmentChoices
+      },
+    ])
+    ((res)=> dataBase.deleteDepartment(res.departmentId))
+    .then(() => console.log("Removed department from the database"))
+    .then(() => startPrompts());
+  });
+};
+
+
+function closeApp() {
+  console.log('Process completed successfully')
+  process.exit();
 }
