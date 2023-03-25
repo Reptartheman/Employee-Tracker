@@ -1,11 +1,12 @@
 const mysql = require('mysql2');
+const inquirer = require("inquirer");
 const connection = mysql.createConnection(
     {
-        host: process.env.DB_HOST,
-        database: process.env.DB_NAME,
-        password: process.env.DB_PASSWORD,
-        user: process.env.DB_USER,
-      },
+        database: 'employees',
+        password: 'password',
+        user: 'root',      
+        host: 'localhost',        
+    },
       console.log("\x1b[33m", `Connected to ${process.env.DB_NAME}.`)
     );
 
