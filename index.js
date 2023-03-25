@@ -109,7 +109,7 @@ function startPrompts() {
         updateEmployeeRole();
         break;
       case "UPDATE_EMPLOYEE_MANAGER":
-        updateEmployeeMangager();
+        changeManager();
         break;
       case "ADD_EMPLOYEE":
         addEmployee();
@@ -230,22 +230,204 @@ function viewRoles() {
 }
 
 function viewDepartments() {
-    dataBase.searchAllDepartments()
+  dataBase
+    .searchAllDepartments()
     .then(([rows]) => {
-        let departments = rows;
-        console.log('\n');
-        console.table(departments);
+      let departments = rows;
+      console.log("\n");
+      console.table(departments);
     })
     .then(() => startPrompts());
 }
 
 function viewDepartmentBudget() {
-    dataBase.departmentBudgetData()
+  dataBase
+    .departmentBudgetData()
     .then(([rows]) => {
-        let departments = rows;
-        console.log('\n');
-        console.table(departments);
+      let departments = rows;
+      console.log("\n");
+      console.table(departments);
     })
     .then(() => startPrompts());
 }
 
+/*  The following function will update the employee role with similar logic from the functions above.
+ When we first run the query, we are calling the searchEmployees function from the index file in the database folder.
+
+ This function call then stores the data from that call in an array. Tehn we store in the employees variable.
+ The employeeChoices variable is then turning those answers into a new array using the .map() method.
+    - In this method we are passing an object as the parameter, which returns that data as a new object with template literals so that
+    the data from our first query will appear.
+
+    We then use inquirer which displays the prompts.
+    The answers from those prompts are stored in the employeeChoices variable.
+    There is then a second part chanined to this with a response...
+    That response is the employeeId stored in the employeeId variable.
+    We then run a query with searchAllRoles function and then...
+    Pass that result as an array.
+    The roles variable will store that result in which we then make the roleChoices variable and 
+    use the .map() method which allows us to make a new array.
+
+    We run inquirer again to ask the user questions based on our stored variable from the code block above it.
+    We'll then query our dataBase file and pass the employeeId and the roleId as parameters.
+ */
+function updateEmployeeRole() {
+  dataBase.searchEmployees().then(([rows]) => {
+    let employees = rows;
+    const employeeChoices = employees.map(({ id, first_name, last_name }) => ({
+      name: `${first_name} ${last_name}`,
+      value: id,
+    }));
+    prompt([
+      {
+        type: "list",
+        name: "employeeId",
+        message: "Which employee's role do you want to update?",
+        choices: employeeChoices,
+      },
+    ]).then((res) => {
+      let employeeId = res.employeeId;
+      dataBase.searchAllRoles().then(([rows]) => {
+        let roles = rows;
+        const roleChoices = roles.map(({ id, title }) => ({
+          name: `${title}`,
+          value: id,
+        }));
+        prompt([
+          {
+            type: "list",
+            name: "roleId",
+            message: "Which role do you want to assign the selected employee?",
+            choices: roleChoices,
+          },
+        ])
+          .then((res) => dataBase.updateEmployeeRole(employeeId, res.roleId))
+          .then(() => console.log("Updated employee's role"))
+          .then(() => startPrompts());
+      });
+    });
+  });
+}
+// Same logic as above, but now we are changing the manager.
+function changeManager() {
+  dataBase.searchEmployees().then(([rows]) => {
+    let employees = rows;
+    const employeeChoices = employees.map(({ id, first_name, last_name }) => ({
+      name: `${first_name} ${last_name}`,
+      value: id,
+    }));
+    prompt([
+      {
+        type: "list",
+        name: "employeeId",
+        message: "Which employee's manager do you want to update?",
+        choices: employeeChoices,
+      },
+    ]).then((res) => {
+      let employeeId = res.employeeId;
+      dataBase.searchPossibleMngrs(employeeId).then(([rows]) => {
+        let managers = rows;
+        const managerChoices = managers.map(
+          ({ id, first_name, last_name }) => ({
+            name: `${first_name} ${last_name}`,
+            value: id,
+          })
+        );
+        prompt([
+          {
+            type: "list",
+            name: "managerId",
+            message:
+              "Which employee do you want to set as manager for the selected employee?",
+            choices: managerChoices,
+          },
+        ])
+          .then((res) =>
+            dataBase.updateEmployeeManager(employeeId, res.managerId)
+          )
+          .then(() => console.log("Updated employee's manager"))
+          .then(() => startPrompts());
+      });
+    });
+  });
+}
+
+/* This next function will allow the user to add an employee, taking into account that employees
+have different roles.
+    ** LINES 373 TO 387 **
+    - First start with the inquirer prompt asking the first and last name of the employee.
+    - Then the results will get stored into some variables.
+    - The data from those variables will be used in the 3rd to last .then() call found below.
+    ** LINES 388 TO 398 **
+    - We will then access the database to find all of the roles.
+    - .map() gets used on the results from that query to show the results of those choices in the next inquirer prompt.
+    ** LINES 399 TO 409 **
+    - Next, we will use the users answers and store it as a variable BEFORE the next query to find all of the employees.
+    - We then use .map() again on our previous results and then use .unshift() to add the values to the beginning of the array.
+    ** LINES 410 TO 428 **
+    - After that we will run another prompt to ask who the employees manager is.
+    - Those answers get stored in a variable and then we pass that variable to the into our addEmployee() function.
+
+*/
+
+function addEmployee() {
+  prompt([
+    {
+      type: "input",
+      name: "first_name",
+      message: "What is the employees first name?",
+    },
+    {
+      type: "input",
+      name: "last_name",
+      message: "What is the employees last name?",
+    },
+  ]).then((res) => {
+    let firstName = res.first_name;
+    let lastName = res.last_name;
+    dataBase.searchAllRoles().then(([rows]) => {
+      let roles = rows;
+      const roleChoices = roles.map(({ id, title }) => ({
+        name: title,
+        value: id,
+      }));
+      prompt({
+        type: "list",
+        name: "roleId",
+        message: "Enter the employees role",
+        choices: roleChoices,
+      }).then((res) => {
+        let roleId = res.roleId;
+        dataBase.searchEmployees().then(([rows]) => {
+          let employees = rows;
+          const managerChoices = employees.map(
+            ({ id, first_name, last_name }) => ({
+              name: `${first_name} ${last_name}`,
+              value: id,
+            })
+          );
+          managerChoices.unshift({ name: "None", value: null });
+          prompt({
+            type: "list",
+            name: "managerId",
+            message: "Who is the employee's manager?",
+            choices: managerChoices,
+          })
+            .then((res) => {
+              let employee = {
+                manager_id: res.managerId,
+                role_id: roleId,
+                first_name: firstName,
+                last_name: lastName,
+              };
+              dataBase.addEmployee(employee);
+            })
+            .then(() =>
+              console.log(`Added ${firstName} ${lastName} to the database`)
+            )
+            .then(() => startPrompts());
+        });
+      });
+    });
+  });
+}
