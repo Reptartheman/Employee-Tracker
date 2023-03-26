@@ -2,26 +2,11 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 
-## Table of Contents
-
-- [Description](#description)
-  - [Installation](#installation)
-  - [Usage](#usage)
-  - [Video Walkthrough](#video walkthrough)
-  - [License](#license)
-  - [Questions](#questions)
 
 ## Description
 
-This is an app to be used within your CLI built using JavaScript, Node.js and npm. 
+This is an app to be used within your CLI built using JavaScript, Node.js and npm. Once enter the application you are presented with a serires of options such as, 'View All Employees', 'View all Departments', 'View All Roles' and more. This app uses MySQL 2 to keep track of all of the data. It's supposed to be to keep track of employee data at any given company. For a walkthrough demonstration please see the video below.
 
-## Installation
-
-Simply use npm i and node index.js once you have seeded your database.
-
-## Usage 
-
-See description section.
 
 
 ## Video Walkthrough
