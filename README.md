@@ -11,7 +11,7 @@ This is an app to be used within your CLI built using JavaScript, Node.js and np
 
 ## Video Walkthrough
 
-
+![video walkthrough](./Video-Demo.gif)
 
 
 ## Questions
